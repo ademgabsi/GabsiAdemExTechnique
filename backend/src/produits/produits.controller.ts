@@ -8,11 +8,13 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ProduitsService } from './produits.service';
 import { CreerProduitDto } from './dto/creer-produit.dto';
 import { ModifierProduitDto } from './dto/modifier-produit.dto';
 import { ModifierStockDto } from './dto/modifier-stock.dto';
+import { FiltresProduitsDto } from './dto/filtres-produits.dto';
 import { Produit } from './entities/produit.entity';
 
 @Controller('produits')
@@ -20,8 +22,8 @@ export class ProduitsController {
   constructor(private readonly produitsService: ProduitsService) {}
 
   @Get()
-  trouverTous(): Promise<Produit[]> {
-    return this.produitsService.trouverTous();
+  trouverTous(@Query() filtres: FiltresProduitsDto): Promise<Produit[]> {
+    return this.produitsService.trouverTous(filtres);
   }
 
   @Get(':id')

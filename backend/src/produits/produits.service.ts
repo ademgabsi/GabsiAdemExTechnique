@@ -4,11 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { Produit } from './entities/produit.entity';
 import { CreerProduitDto } from './dto/creer-produit.dto';
 import { ModifierProduitDto } from './dto/modifier-produit.dto';
 import { ModifierStockDto } from './dto/modifier-stock.dto';
+import { FiltresProduitsDto } from './dto/filtres-produits.dto';
 
 @Injectable()
 export class ProduitsService {
@@ -17,8 +18,18 @@ export class ProduitsService {
     private readonly produitsRepository: Repository<Produit>,
   ) {}
 
-  async trouverTous(): Promise<Produit[]> {
-    return this.produitsRepository.find();
+  async trouverTous(filtres?: FiltresProduitsDto): Promise<Produit[]> {
+    const where: FindOptionsWhere<Produit> = {};
+
+    if (filtres?.categorie) {
+      where.categorie = filtres.categorie;
+    }
+
+    if (filtres?.recherche) {
+      where.nom = Like(`%${filtres.recherche}%`);
+    }
+
+    return this.produitsRepository.find({ where });
   }
 
   async trouverUn(id: number): Promise<Produit> {
