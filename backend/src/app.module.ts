@@ -1,9 +1,25 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'sqlite',
+        database: config.get<string>(
+          'SQLITE_PATH',
+          './gestion-stock.sqlite',
+        ),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
