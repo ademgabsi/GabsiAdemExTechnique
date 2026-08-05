@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Produit } from './entities/produit.entity';
 import { CreerProduitDto } from './dto/creer-produit.dto';
 import { ModifierProduitDto } from './dto/modifier-produit.dto';
+import { ModifierStockDto } from './dto/modifier-stock.dto';
 
 @Injectable()
 export class ProduitsService {
@@ -38,5 +43,22 @@ export class ProduitsService {
   async supprimer(id: number): Promise<void> {
     const produit = await this.trouverUn(id);
     await this.produitsRepository.remove(produit);
+  }
+
+  async modifierStock(id: number, dto: ModifierStockDto): Promise<Produit> {
+    const produit = await this.trouverUn(id);
+    const prochaineQuantite =
+      dto.type === 'entree'
+        ? produit.quantite + dto.quantite
+        : produit.quantite - dto.quantite;
+
+    if (prochaineQuantite < 0) {
+      throw new BadRequestException(
+        `Stock insuffisant pour le produit #${id} (disponible: ${produit.quantite}, demande: ${dto.quantite})`,
+      );
+    }
+
+    produit.quantite = prochaineQuantite;
+    return this.produitsRepository.save(produit);
   }
 }
