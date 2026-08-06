@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProduitsModule } from './produits/produits.module';
 import { CommunModule } from './commun/commun.module';
+import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CommunModule } from './commun/commun.module';
     }),
     ProduitsModule,
     CommunModule,
+    TableauDeBordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
