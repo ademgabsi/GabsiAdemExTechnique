@@ -10,6 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ProduitsService } from './produits.service';
 import { CreerProduitDto } from './dto/creer-produit.dto';
 import { ModifierProduitDto } from './dto/modifier-produit.dto';
@@ -17,6 +18,7 @@ import { ModifierStockDto } from './dto/modifier-stock.dto';
 import { FiltresProduitsDto } from './dto/filtres-produits.dto';
 import { Produit } from './entities/produit.entity';
 
+@ApiTags('produits')
 @Controller('produits')
 export class ProduitsController {
   constructor(private readonly produitsService: ProduitsService) {}
