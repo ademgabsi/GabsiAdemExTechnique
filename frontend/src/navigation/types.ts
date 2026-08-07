@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp, NativeStackScreenProps } from '@react-n
 export type RootStackParamList = {
   Liste: undefined;
   Detail: { id: number };
-  Formulaire: { id?: number };
+  Formulaire: { id?: number } | undefined;
   Dashboard: undefined;
 };
 
