@@ -38,6 +38,7 @@ export function DetailProduitScreen({ navigation, route }: ScreenProps<'Detail'>
           icon="pencil"
           onPress={() => navigation.navigate('Formulaire', { id })}
           accessibilityLabel="Modifier le produit"
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         />
       ),
     });
