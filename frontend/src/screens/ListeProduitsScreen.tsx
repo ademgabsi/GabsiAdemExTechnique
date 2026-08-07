@@ -1,9 +1,124 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { FAB } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { Produit } from '../types';
+import { useProduitsStore } from '../store';
+import { colors, spacing } from '../theme';
+import { CategoryFilter, ProductCard, SearchBar } from '../components/product';
+import { EmptyState, ErrorState, Loading } from '../components/common';
+import type { ScreenProps } from '../navigation/types';
 
-export function ListeProduitsScreen() {
+export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
+  const insets = useSafeAreaInsets();
+
+  const produits = useProduitsStore((s) => s.produits);
+  const chargement = useProduitsStore((s) => s.chargement);
+  const erreur = useProduitsStore((s) => s.erreur);
+  const chargerProduits = useProduitsStore((s) => s.chargerProduits);
+
+  const [recherche, setRecherche] = useState('');
+  const [categorie, setCategorie] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    chargerProduits();
+  }, [chargerProduits]);
+
+  const categories = useMemo(
+    () => Array.from(new Set(produits.map((p) => p.categorie))).sort(),
+    [produits],
+  );
+
+  const produitsFiltres = useMemo(() => {
+    const terme = recherche.trim().toLowerCase();
+    return produits.filter((p) => {
+      const correspondCategorie = !categorie || p.categorie === categorie;
+      const correspondRecherche =
+        !terme ||
+        p.nom.toLowerCase().includes(terme) ||
+        p.reference.toLowerCase().includes(terme);
+      return correspondCategorie && correspondRecherche;
+    });
+  }, [produits, recherche, categorie]);
+
+  const rafraichir = useCallback(() => {
+    chargerProduits();
+  }, [chargerProduits]);
+
+  const ouvrirDetail = useCallback(
+    (produit: Produit) => {
+      navigation.navigate('Detail', { id: produit.id });
+    },
+    [navigation],
+  );
+
+  const ouvrirFormulaire = useCallback(() => {
+    navigation.navigate('Formulaire');
+  }, [navigation]);
+
+  function rendreContenu() {
+    if (chargement && produits.length === 0) {
+      return <Loading label="Chargement des produits…" />;
+    }
+    if (erreur && produits.length === 0) {
+      return <ErrorState message={erreur} onRetry={rafraichir} />;
+    }
+    if (produits.length === 0) {
+      return (
+        <EmptyState
+          emoji="📦"
+          title="Aucun produit"
+          message="Commencez par ajouter votre premier produit."
+          actionLabel="Ajouter un produit"
+          onAction={ouvrirFormulaire}
+        />
+      );
+    }
+    return (
+      <FlatList
+        data={produitsFiltres}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => (
+          <ProductCard produit={item} onPress={ouvrirDetail} />
+        )}
+        refreshing={chargement}
+        onRefresh={rafraichir}
+        contentContainerStyle={[
+          styles.liste,
+          produitsFiltres.length === 0 && styles.vide,
+        ]}
+        ListEmptyComponent={
+          <EmptyState
+            emoji="🔍"
+            title="Aucun résultat"
+            message="Modifiez votre recherche ou vos filtres."
+          />
+        }
+      />
+    );
+  }
+
   return (
     <View style={styles.conteneur}>
-      <Text>Liste des produits</Text>
+      <View style={styles.filtres}>
+        <SearchBar value={recherche} onChangeText={setRecherche} />
+        {categories.length > 0 ? (
+          <CategoryFilter
+            categories={categories}
+            value={categorie}
+            onChange={setCategorie}
+          />
+        ) : null}
+      </View>
+
+      <View style={styles.contenu}>{rendreContenu()}</View>
+
+      <FAB
+        icon="plus"
+        onPress={ouvrirFormulaire}
+        style={[styles.fab, { bottom: spacing.md + insets.bottom }]}
+        accessibilityLabel="Ajouter un produit"
+      />
     </View>
   );
 }
@@ -11,7 +126,28 @@ export function ListeProduitsScreen() {
 const styles = StyleSheet.create({
   conteneur: {
     flex: 1,
-    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
+  filtres: {
+    backgroundColor: colors.surface,
+    padding: spacing.md,
+    gap: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  contenu: {
+    flex: 1,
+  },
+  liste: {
+    padding: spacing.md,
+    paddingBottom: 96,
+  },
+  vide: {
+    flexGrow: 1,
     justifyContent: 'center',
+  },
+  fab: {
+    position: 'absolute',
+    right: spacing.md,
   },
 });
