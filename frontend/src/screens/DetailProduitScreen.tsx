@@ -95,7 +95,7 @@ export function DetailProduitScreen({ navigation, route }: ScreenProps<'Detail'>
     if (chargement) return <Loading label="Chargement du produit…" />;
     return (
       <ErrorState
-        message={erreur ?? 'Produit introuvable.'}
+        message={erreur?.message ?? 'Produit introuvable.'}
         onRetry={() => chargerProduits()}
       />
     );

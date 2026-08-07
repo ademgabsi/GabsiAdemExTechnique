@@ -4,18 +4,22 @@ import { colors, spacing } from '../../theme';
 import { Button } from './Button';
 
 export type ErrorStateProps = {
+  emoji?: string;
+  title?: string;
   message?: string;
   onRetry?: () => void;
 };
 
 export function ErrorState({
+  emoji = '⚠️',
+  title = 'Oups…',
   message = 'Une erreur est survenue.',
   onRetry,
 }: ErrorStateProps) {
   return (
     <View style={styles.conteneur}>
-      <Text style={styles.emoji}>⚠️</Text>
-      <Text variant="titleMedium">Oups…</Text>
+      <Text style={styles.emoji}>{emoji}</Text>
+      <Text variant="titleMedium">{title}</Text>
       <Text variant="bodyMedium" style={styles.message}>
         {message}
       </Text>

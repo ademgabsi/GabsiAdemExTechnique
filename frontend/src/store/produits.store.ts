@@ -18,7 +18,7 @@ import {
 interface ProduitsState {
   produits: Produit[];
   chargement: boolean;
-  erreur: string | null;
+  erreur: ApiError | null;
 
   chargerProduits: (filtres?: FiltresProduitsDto) => Promise<void>;
   creerProduit: (dto: CreerProduitDto) => Promise<Produit>;
@@ -38,7 +38,7 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
       const produits = await getProduits(filtres);
       set({ produits, chargement: false });
     } catch (e) {
-      set({ chargement: false, erreur: messageErreur(e) });
+      set({ chargement: false, erreur: normaliserErreur(e) });
     }
   },
 
@@ -48,7 +48,7 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
       set((state) => ({ produits: [produit, ...state.produits], erreur: null }));
       return produit;
     } catch (e) {
-      set({ erreur: messageErreur(e) });
+      set({ erreur: normaliserErreur(e) });
       throw e;
     }
   },
@@ -62,7 +62,7 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
       }));
       return produit;
     } catch (e) {
-      set({ erreur: messageErreur(e) });
+      set({ erreur: normaliserErreur(e) });
       throw e;
     }
   },
@@ -76,7 +76,7 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
       }));
       return produit;
     } catch (e) {
-      set({ erreur: messageErreur(e) });
+      set({ erreur: normaliserErreur(e) });
       throw e;
     }
   },
@@ -89,14 +89,14 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
         erreur: null,
       }));
     } catch (e) {
-      set({ erreur: messageErreur(e) });
+      set({ erreur: normaliserErreur(e) });
       throw e;
     }
   },
 }));
 
-function messageErreur(e: unknown): string {
-  if (e instanceof ApiError) return e.message;
-  if (e instanceof Error) return e.message;
-  return 'Une erreur inattendue est survenue.';
+function normaliserErreur(e: unknown): ApiError {
+  if (e instanceof ApiError) return e;
+  if (e instanceof Error) return new ApiError(e.message);
+  return new ApiError('Une erreur inattendue est survenue.');
 }
