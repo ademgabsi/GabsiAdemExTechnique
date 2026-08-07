@@ -4,6 +4,7 @@ import { FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Produit } from '../types';
 import { useProduitsStore } from '../store';
+import { estBackendIndisponible } from '../services';
 import { colors, spacing } from '../theme';
 import { CategoryFilter, ProductCard, SearchBar } from '../components/product';
 import { EmptyState, ErrorState, Loading } from '../components/common';
@@ -61,7 +62,19 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
       return <Loading label="Chargement des produits…" />;
     }
     if (erreur && produits.length === 0) {
-      return <ErrorState message={erreur} onRetry={rafraichir} />;
+      const indisponible = estBackendIndisponible(erreur);
+      return (
+        <ErrorState
+          emoji={indisponible ? '🔌' : '⚠️'}
+          title={indisponible ? 'Serveur indisponible' : 'Une erreur est survenue'}
+          message={
+            indisponible
+              ? 'Impossible de contacter le backend. Vérifiez qu’il est démarré (http://localhost:3000).'
+              : erreur.message
+          }
+          onRetry={rafraichir}
+        />
+      );
     }
     if (produits.length === 0) {
       return (
