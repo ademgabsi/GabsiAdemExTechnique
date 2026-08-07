@@ -4,8 +4,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AppNavigator } from './src/navigation';
 import { paperTheme } from './src/theme';
+import { useAlerteRuptures } from './src/hooks';
 
 export default function App() {
+  useAlerteRuptures();
+
   return (
     <SafeAreaProvider>
       <PaperProvider theme={paperTheme}>
