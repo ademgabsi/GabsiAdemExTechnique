@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { FAB, IconButton } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Produit } from '../types';
 import { useProduitsStore } from '../store';
@@ -24,6 +24,18 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
   useEffect(() => {
     chargerProduits();
   }, [chargerProduits]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="chart-bar"
+          onPress={() => navigation.navigate('Dashboard')}
+          accessibilityLabel="Tableau de bord"
+        />
+      ),
+    });
+  }, [navigation]);
 
   const categories = useMemo(
     () => Array.from(new Set(produits.map((p) => p.categorie))).sort(),
@@ -65,7 +77,7 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
       const indisponible = estBackendIndisponible(erreur);
       return (
         <ErrorState
-          emoji={indisponible ? '🔌' : '⚠️'}
+          icon={indisponible ? 'server-network-off' : 'alert-circle-outline'}
           title={indisponible ? 'Serveur indisponible' : 'Une erreur est survenue'}
           message={
             indisponible
@@ -79,7 +91,7 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
     if (produits.length === 0) {
       return (
         <EmptyState
-          emoji="📦"
+          icon="package-variant"
           title="Aucun produit"
           message="Commencez par ajouter votre premier produit."
           actionLabel="Ajouter un produit"
@@ -102,7 +114,7 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
         ]}
         ListEmptyComponent={
           <EmptyState
-            emoji="🔍"
+            icon="magnify"
             title="Aucun résultat"
             message="Modifiez votre recherche ou vos filtres."
           />

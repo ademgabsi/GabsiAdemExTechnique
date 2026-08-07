@@ -12,6 +12,7 @@ import {
   getProduits,
   modifierProduit as modifierProduitApi,
   modifierStock as modifierStockApi,
+  normaliserErreur,
   supprimerProduit as supprimerProduitApi,
 } from '../services';
 
@@ -94,9 +95,3 @@ export const useProduitsStore = create<ProduitsState>()((set) => ({
     }
   },
 }));
-
-function normaliserErreur(e: unknown): ApiError {
-  if (e instanceof ApiError) return e;
-  if (e instanceof Error) return new ApiError(e.message);
-  return new ApiError('Une erreur inattendue est survenue.');
-}

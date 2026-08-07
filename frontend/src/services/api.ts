@@ -57,6 +57,12 @@ export function estBackendIndisponible(error: unknown): boolean {
   );
 }
 
+export function normaliserErreur(e: unknown): ApiError {
+  if (e instanceof ApiError) return e;
+  if (e instanceof Error) return new ApiError(e.message);
+  return new ApiError('Une erreur inattendue est survenue.');
+}
+
 function messageReseau(): string {
   return 'Impossible de joindre le serveur. Vérifiez que le backend est démarré et votre connexion réseau.';
 }
