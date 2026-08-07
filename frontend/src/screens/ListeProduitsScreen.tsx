@@ -32,6 +32,7 @@ export function ListeProduitsScreen({ navigation }: ScreenProps<'Liste'>) {
           icon="chart-bar"
           onPress={() => navigation.navigate('Dashboard')}
           accessibilityLabel="Tableau de bord"
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         />
       ),
     });

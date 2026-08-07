@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Snackbar } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { CreerProduitDto } from '../types';
@@ -95,10 +95,14 @@ export function FormulaireProduitScreen({ navigation, route }: ScreenProps<'Form
 
   return (
     <View style={styles.racine}>
-      <ScrollView
-        contentContainerStyle={[styles.conteneur, { paddingBottom: insets.bottom + spacing.lg }]}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={styles.conteneurKAV}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        <ScrollView
+          contentContainerStyle={[styles.conteneur, { paddingBottom: insets.bottom + spacing.lg }]}
+          keyboardShouldPersistTaps="handled"
+        >
         <Controller
           control={control}
           name="nom"
@@ -202,7 +206,8 @@ export function FormulaireProduitScreen({ navigation, route }: ScreenProps<'Form
         >
           {id ? 'Enregistrer' : 'Ajouter'}
         </Button>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <Snackbar visible={message !== null} onDismiss={() => setMessage(null)} duration={3000}>
         {message}
@@ -215,6 +220,9 @@ const styles = StyleSheet.create({
   racine: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  conteneurKAV: {
+    flex: 1,
   },
   conteneur: {
     padding: spacing.md,

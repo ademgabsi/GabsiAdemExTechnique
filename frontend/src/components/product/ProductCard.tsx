@@ -14,6 +14,7 @@ export function ProductCard({ produit, onPress }: ProductCardProps) {
     <Pressable
       onPress={() => onPress?.(produit)}
       style={({ pressed }) => [styles.card, pressed && styles.presse]}
+      android_ripple={{ color: colors.surfaceAlt }}
     >
       <View style={styles.entete}>
         <View style={styles.infos}>
