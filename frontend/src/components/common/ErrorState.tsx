@@ -1,24 +1,24 @@
 import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Icon, Text } from 'react-native-paper';
 import { colors, spacing } from '../../theme';
 import { Button } from './Button';
 
 export type ErrorStateProps = {
-  emoji?: string;
+  icon?: string;
   title?: string;
   message?: string;
   onRetry?: () => void;
 };
 
 export function ErrorState({
-  emoji = '⚠️',
+  icon = 'alert-circle-outline',
   title = 'Oups…',
   message = 'Une erreur est survenue.',
   onRetry,
 }: ErrorStateProps) {
   return (
     <View style={styles.conteneur}>
-      <Text style={styles.emoji}>{emoji}</Text>
+      <Icon source={icon} size={48} color={colors.danger} />
       <Text variant="titleMedium">{title}</Text>
       <Text variant="bodyMedium" style={styles.message}>
         {message}
@@ -39,10 +39,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
     gap: spacing.sm,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: spacing.sm,
   },
   message: {
     textAlign: 'center',

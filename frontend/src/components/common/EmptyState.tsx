@@ -1,10 +1,10 @@
 import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Icon, Text } from 'react-native-paper';
 import { colors, spacing } from '../../theme';
 import { Button } from './Button';
 
 export type EmptyStateProps = {
-  emoji?: string;
+  icon?: string;
   title: string;
   message?: string;
   actionLabel?: string;
@@ -12,7 +12,7 @@ export type EmptyStateProps = {
 };
 
 export function EmptyState({
-  emoji = '📦',
+  icon = 'package-variant',
   title,
   message,
   actionLabel,
@@ -20,7 +20,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <View style={styles.conteneur}>
-      <Text style={styles.emoji}>{emoji}</Text>
+      <Icon source={icon} size={48} color={colors.textMuted} />
       <Text variant="titleMedium">{title}</Text>
       {message ? (
         <Text variant="bodyMedium" style={styles.message}>
@@ -43,10 +43,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
     gap: spacing.sm,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: spacing.sm,
   },
   message: {
     textAlign: 'center',
