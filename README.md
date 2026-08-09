@@ -80,6 +80,8 @@ Puis scanner le QR code avec **Expo Go** ou appuyer sur `a` (Android) / `i` (iOS
   <a href="./docs/demo.mp4">▶ Voir la vidéo</a>
 </p>
 
+Lien video sur drive :https://drive.google.com/file/d/1--pW9k40ybF5wYvs9N90V0xfNoWmq50D/view?usp=drive_link
+
 ---
 
 ## Versions utilisées
